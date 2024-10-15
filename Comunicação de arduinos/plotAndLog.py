@@ -1,0 +1,55 @@
+import serial
+import math
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+import csv
+import numpy as np
+
+#COM
+SERIAL_PORT = 'COM5'
+BAUD_RATE = 9600
+
+#CONEXAO
+
+#controle = 0
+conser = serial.Serial(SERIAL_PORT, BAUD_RATE)
+
+#SENSOR
+currtime = []
+potenciometro = []
+
+#LEITURA
+def leitura_sensor():
+    linha = conser.readline().decode('utf-8').strip()
+    valores = linha.split(', ')
+    if float(valores[1]) != 0:
+        potLog = math.log(float(valores[1]), 10)
+        currtime.append(float(valores[0]))
+        potenciometro.append(float(potLog))
+    else:
+        currtime.append(float(valores[0]))
+        potenciometro.append(float(valores[1])) 
+
+#PLOTAGEM
+def plotagem_up(frame):
+    leitura_sensor()
+    plt.cla()
+    plt.plot(currtime, potenciometro, label='Potenciômetro')
+    plt.xlabel('Tempo')
+    plt.ylabel('Ângulo')
+    plt.legend()
+
+#SALVAMENTO
+def salvar(event):
+    with open('arduino_data.csv', 'w', newline= '') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(['Time', 'Potenciometro'])
+        for t, pot in zip(currtime, potenciometro):
+            writer.writerow([t, pot])
+
+#MAIN
+fig, ax = plt.subplots()
+fig.canvas.mpl_connect('close_event', salvar)
+
+ani = FuncAnimation(fig, plotagem_up, interval=10)
+plt.show()
