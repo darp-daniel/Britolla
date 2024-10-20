@@ -17,6 +17,8 @@ conser = serial.Serial(SERIAL_PORT, BAUD_RATE)
 #SENSOR
 currtime = []
 potenciometro = []
+distancia = [0, 1.75, 3.25, 5]
+# Equação a ser utilizada ==> k = tan(pi*(vout/vin - 1/2))/d
 
 #LEITURA
 def leitura_sensor():
