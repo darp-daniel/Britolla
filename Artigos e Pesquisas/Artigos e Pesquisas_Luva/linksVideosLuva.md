@@ -1,7 +1,7 @@
 # Siga o Exemplo de como colocar os links:
-Vídeo N:
-    - [Título do vídeo][link]
-    - Assunto do vídeo
+0. Vídeo N:
+   -[Título Vídeo](link)
+   - Assunto do vídeo
 
 ## **Coloque os links aqui abaixo seguindo a notação!!**
 1. Vídeo 1:
