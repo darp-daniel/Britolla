@@ -2,6 +2,27 @@ import pygame
 import sys
 import random
 import time
+import serial
+import math
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+import csv
+import numpy as np
+
+#COM
+SERIAL_PORT = 'COM5'
+BAUD_RATE = 9600
+
+#CONEXAO
+
+#controle = 0
+conser = serial.Serial(SERIAL_PORT, BAUD_RATE)
+
+def leiturasensor():
+    linha = conser.readline().decode('utf-8').strip()
+    valores = linha.split(', ')
+    matriz = np.full(5, float(valores[1]))
+    return matriz
 
 # Configurações do Pygame
 pygame.init()
@@ -24,7 +45,7 @@ def mudar_cor(angles):
         (139, 0, 0),      # Vermelho escuro
         (128, 0, 128)     # Roxo
     ]
-    return [tons_pele[angle // 18] for angle in angles]
+    return [tons_pele[min(int(angle // 18), len(tons_pele) - 1)] for angle in angles]
 
 # Função para desenhar a palma
 def desenhar_mao(x, y):
@@ -66,9 +87,10 @@ try:
         desenhar_mao(350, 300)
 
         # Gerar novos ângulos e desenhar dedos
-        angles = [random.randrange(0, 90) for _ in range(5)]
+        angles = leiturasensor()
         draw_fingers(angles)
-        clock.tick(1)
+        print(mudar_cor(angles))
+        clock.tick(60)
 
         pygame.display.flip()
 except KeyboardInterrupt:
