@@ -36,7 +36,7 @@ def conexaoUnity(host, porta):
     return conn, server_socket
 
 try:
-    con = conexaoArduino('127.0.0.1', 65432)
+    con, sever_socket = conexaoArduino('127.0.0.1', 65432)
     connserial = conexaoArduino('COM5', 9600)
     while True:
         #Dados potenciometros coletados
@@ -44,11 +44,11 @@ try:
         
         # Enviar dados como bytes e estruturados
         data = struct.pack('fffff', *dedos)
-        con[0].sendall(data)
+        con.sendall(data)
         
         time.sleep(0.1)  # Intervalo entre os envios de dados
 except Exception:
     print('Deu erro!!')
 finally:
-    con[0].close()
-    con[1].close()
+    con.close()
+    sever_socket.close()
