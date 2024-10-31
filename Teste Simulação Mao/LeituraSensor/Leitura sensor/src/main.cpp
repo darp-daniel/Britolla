@@ -1,4 +1,5 @@
 #include <Arduino.h>
+
 /* Potentiometer reading program */
 // Constants
 #define DELAY 500 // Delay between two measurements in ms
@@ -11,23 +12,44 @@ Pinos:
   2.VCC
   3.GND
 */
-const int sensorPin = A0; // Pin connected to sensor
+
+// DEDOS 
+
+#define INDICADOR = A1;
+#define ANELAR = A2;
+#define MEDIO = A3;
+#define MINDINHO = A4;
+#define DEDAO = A5;
+
+
+
 //Variables
-int sensorVal; // Analog value from the sensor
-float res; //resistance value
-float sensorRawToPhys(int raw){
- 	// Conversion rule
- 	float Vout = float(raw) * (VIN / float(1023));// Conversion analog to voltage
+float vIndi;
+float vMed;
+float vAnel;
+float vMindi;
+float sensorRawToPhys(int pin){
+ 	float sensorVal = analogRead(pin)
+	// Conversion rule
+ 	float Vout = sensorVal * (VIN / float(1023));// Conversion analog to voltage
  	return map(Vout,0,5,0,90);
 }
 void setup(void) {
  	Serial.begin(9600);
 }
 void loop(void) {
- 	sensorVal = analogRead(sensorPin);
- 	res=sensorRawToPhys(sensorVal);
-  Serial.print(millis());
-  Serial.print(", ");
- 	Serial.println(res); // the analog reading
- 	delay(DELAY);
+	Serial.print(millis());
+	Serial.print(", ");
+	vIndi = sensorRawToPhys(INDICADOR);
+	Serial.print(vIndi);
+	Serial.print(", ");
+	vMed = sensorRawToPhys(MEDIO);
+	Serial.print(vMed);
+	Serial.print(", ");
+	vAnel = sensorRawToPhys(ANELAR);
+	Serial.print(vAnel);
+	Serial.print(", ");
+	vMindi = sensorRawToPhys(MINDINHO);
+	Serial.println(vMindi);
+	delay(DELAY);
 }
