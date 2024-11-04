@@ -67,6 +67,9 @@ def acharFuncao(event):
         plt.title("Ajuste Linear")
         plt.show()
 
+        # Imprimindo a função
+        print(f"Função: y = {a:.2f}x + {b:.2f}")
+
 # MAIN
 fig, ax = plt.subplots()
 fig.canvas.mpl_connect('close_event', acharFuncao)
