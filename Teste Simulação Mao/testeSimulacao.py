@@ -1,71 +1,56 @@
 import pygame
 import sys
-import random
-import time
 import serial
-import math
-import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
-import csv
 import numpy as np
 
-#COM
+# COM port configuration
 SERIAL_PORT = 'COM5'
 BAUD_RATE = 9600
 
-#CONEXAO
-
+# Serial connection
 conser = serial.Serial(SERIAL_PORT, BAUD_RATE)
 
 def leiturasensor():
     linha = conser.readline().decode('utf-8').strip()
     valores = linha.split(', ')
-    matriz = np.array(valores)
+    valoresR = [float(i) for i in valores]
+    matriz = np.array(valoresR)
     return matriz
 
-# Configurações do Pygame
+# Pygame setup
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption('Simulação de Mão com Potenciômetros')
 
-# Configuração de cores
+# Colors
 branco = (255, 255, 255)
 pele = (139, 69, 19)
 
-# Dicionário com a configuração dos dedos
+# Dictionary to store finger positions
 pos_dedos = {}
 
 def dedosMud(angle):
     return angle * 100 / 90
 
-# Função para desenhar a palma
+# Draw the palm of the hand
 def desenhar_mao(x, y):
     pygame.draw.rect(screen, pele, (x, y, 100, 150))
 
-# Função para desenhar os dedos
+# Draw the fingers
 def draw_fingers(angles):
     dedos = ['indicador', 'medio', 'anelar', 'minimo', 'polegar']
     x = 358
     y = 300
     distancia_dedos = 26
     finger_width = 15
-    finger_length = 100
-    angulos = dedos(angles)
     
-    for i, dedo in enumerate(dedos[:-1]):  # Para os 4 dedos principais
-        finger_length = dedosMud(angulos[i])
+    for i, dedo in enumerate(dedos[:-1]):  # For the four main fingers
+        finger_length = dedosMud(angles[i])
         pos = pygame.draw.line(screen, pele, (x, y), (x, y - finger_length), finger_width)
         pos_dedos[dedo] = pos
         x += distancia_dedos
-    
-    # Desenhar o polegar
-    p_x = 354
-    p_y = 400
-    cor_p = angulos[4]
-    polegar = pygame.draw.line(screen, cor_p, (p_x, p_y), (333, 350), finger_width)
-    pos_dedos['polegar'] = polegar
 
-# Loop principal
+# Main loop
 clock = pygame.time.Clock()
 try:
     while True:
@@ -77,10 +62,10 @@ try:
         screen.fill(branco)
         desenhar_mao(350, 300)
 
-        # Gerar novos ângulos e desenhar dedos
+        # Read angles and draw fingers
         angles = leiturasensor()
         draw_fingers(angles)
-        clock.tick(60)
+        clock.tick(120)
 
         pygame.display.flip()
 except KeyboardInterrupt:
