@@ -12,8 +12,7 @@ BAUD_RATE = 11200
 # Conexão com o sensor
 conn = serial.Serial(COM, BAUD_RATE)
 
-# Array para armazenar dados
-array_de_tuplas = []
+leitura = []
 
 def leituraSensor(array):
     # Espera a resposta do arduino
@@ -24,29 +23,30 @@ def leituraSensor(array):
         try:
             matriz = (float(valores[0]), float(valores[1]))
             array.append(matriz)
+            if matriz[0] != 90:
+                leituraSensor(array)
         except ValueError:
             print("Erro ao converter valores do sensor para float.")
 
 def plotagem(frame):
-    leituraSensor(array_de_tuplas)  # Atualiza os dados do sensor, se houver dados novos
-    
+    leituraSensor(leitura)  # Atualiza os dados do sensor, se houver dados novos
     # Separando os dados em x e y
-    if array_de_tuplas:
-        xA, yA = zip(*array_de_tuplas)
+    if leitura:
+        yA, xA = zip(*leitura)
         x = np.array(xA)
         y = np.array(yA)
         
         # Plotando os dados em tempo real
         ax.clear()
         ax.scatter(x, y, label='Dados', color="red")
-        ax.plot(x, y, label='Relação MPU e Dedo')
-        ax.set_xlabel('MPU')
-        ax.set_ylabel('DEDO')
+        ax.plot(x, y, label='Relação Angulo e Bits')
+        ax.set_xlabel('Bits')
+        ax.set_ylabel('Angulo')
         ax.legend()
 
 def acharFuncao(event):
-    if len(array_de_tuplas) > 1:  # Verificar se há dados suficientes
-        xA, yA = zip(*array_de_tuplas)
+    if len(leitura) > 1:  # Verificar se há dados suficientes
+        xA, yA = zip(*leitura)
         x = np.array(xA)
         y = np.array(yA)
         
