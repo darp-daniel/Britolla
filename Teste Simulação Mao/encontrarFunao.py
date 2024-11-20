@@ -6,8 +6,8 @@ from matplotlib.animation import FuncAnimation
 import time
 
 # Definição das PORTS E BAUD_RATE
-COM = 'COMn'  # Defina a porta correta
-BAUD_RATE = 11200
+COM = 'COM5'  # Defina a porta correta
+BAUD_RATE = 9600
 
 # Conexão com o sensor
 conn = serial.Serial(COM, BAUD_RATE)
