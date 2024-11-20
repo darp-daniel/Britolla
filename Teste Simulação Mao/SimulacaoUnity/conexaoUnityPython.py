@@ -20,7 +20,7 @@ def leiturasensor(conser):
     valores = linha.split(', ')
     dedos = np.array([float(val) for val in valores[1:]])
     return dedos
-def conexaoUnity(host, porta):
+def conexaoUnity():
     # Configurações do servidor
     HOST = '127.0.0.1'  # Endereço local
     PORT = 65432        # Porta
@@ -36,7 +36,7 @@ def conexaoUnity(host, porta):
     return conn, server_socket
 
 try:
-    con, sever_socket = conexaoArduino('127.0.0.1', 65432)
+    con, sever_socket = conexaoUnity()
     connserial = conexaoArduino('COM5', 9600)
     while True:
         #Dados potenciometros coletados
