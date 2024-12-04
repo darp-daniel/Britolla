@@ -17,26 +17,20 @@ conser = serial.Serial(SERIAL_PORT, BAUD_RATE)
 #SENSOR
 currtime = []
 potenciometro = []
-distancia = [0, 1.75, 3.25, 5]
 # Equação a ser utilizada ==> k = tan(pi*(vout/vin - 1/2))/d
 
 #LEITURA
 def leitura_sensor():
     linha = conser.readline().decode('utf-8').strip()
     valores = linha.split(', ')
-    if float(valores[1]) != 0:
-        potLog = math.log(float(valores[1]), 10)
-        currtime.append(float(valores[0]))
-        potenciometro.append(float(potLog))
-    else:
-        currtime.append(float(valores[0]))
-        potenciometro.append(float(valores[1])) 
+    currtime.append(float(valores[0]))
+    potenciometro.append(float(valores[1])) 
 
 #PLOTAGEM
 def plotagem_up(frame):
     leitura_sensor()
     plt.cla()
-    plt.plot(currtime, potenciometro, label='Potenciômetro')
+    plt.scatter(currtime, potenciometro, label='Potenciômetro')
     plt.xlabel('Tempo')
     plt.ylabel('Ângulo')
     plt.legend()

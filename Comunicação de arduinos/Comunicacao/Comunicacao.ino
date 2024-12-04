@@ -1,28 +1,55 @@
-#include <RF24.h> //Inclusão da biblioteca do módulo
-#include <nRF24L01.h> //Inclusão da biblioteca do módulo
-#include <printf.h>
+#include <Arduino.h>
+#include <nRF24L01.h>
+#include <SPI.h>
+#include <RF24.h>
 
-//RECEPTOR
-//verde CE 8
-//laranja CSN 9
+RF24 radio(9,8);
+const byte endereco[6] = "00001";
+int leituraAD = 5;
+float lido, ang, angulo; 
+long tempo;
 
-RF24 radio(8,9); //Definição dos pins 'CE' e 'CSN'
-const byte address[6] = "00001"; //Definição do endereço a ser utilizado pelo os módulos
-int valor; //Tipo do valor a ser recebido pelo arduino
-
+/*
 void setup() {
-  Serial.begin(115200);
-  radio.begin(); //Início de comunicação
-  radio.openReadingPipe(0,address); // Início da linha de recepção de nº 0 conforme o dado
-  radio.setPALevel(RF24_PA_MIN); //Configuração do nível de potência de transmissão do módulo
-  radio.startListening(); // Início da recepção
-
-}
+  Serial.begin(9600);
+  radio.begin();
+  radio.openReadingPipe(0, endereco);
+  radio.setPALevel(RF24_PA_MIN);
+  radio.startListening();
+  }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  if (radio.available()) { //Checa se existe alguma transmissão disponível na linha de rádio endereçada
-    radio.read(&valor, sizeof(valor)); // Ler o valor recebido e armazena na variável pedida
-    Serial.println(valor);
+  tempo = millis();
+  if (radio.available()){
+    radio.read(&angulo, sizeof(angulo));
+    Serial.print(angulo);
+    Serial.print(", ");
+    Serial.println(tempo);
   }
+  delay(1000);
+}
+*/
+
+
+void setup() {
+  Serial.begin(9600);
+  radio.begin();
+  radio.openWritingPipe(endereco);
+  radio.setPALevel(RF24_PA_MIN);
+  radio.stopListening();
+  pinMode(leituraAD, INPUT);
+  }
+
+void loop() {
+  lido = analogRead(leituraAD);
+  ang = ((260*(float)lido)/1023)+0.5;
+  angulo = map(lido,0,1023,0,260);
+  if(lido <= 28){
+    angulo = ang*5;
+  }
+  if(lido > 28){
+    angulo = (ang+20);
+  }
+  radio.write(&angulo, sizeof(angulo));
+  delay(1000);
 }
