@@ -33,9 +33,6 @@ pyinstaller
 pyinstaller-hooks-contrib
 PyOpenGL
 pyparsing
-PySide6
-PySide6_Addons
-PySide6_Essentials
 PySocks
 python-dateutil
 pytz
