@@ -13,7 +13,7 @@ void loop(){
   volts = leitura*(4.9/1023);
   angle = angMax * leitura/1023;
 
-  if(abs(prevAng - angle) < 0.){
+  if(prevAng < angle){
     Serial.print("Volts:");
     Serial.print(volts);
     Serial.print(", Ângulo:");
