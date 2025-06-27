@@ -14,11 +14,8 @@ void loop(){
 
 float calcularAng(int pin){
     unsigned long leitura = analogRead(pin);
-    prevAngulo = angMax * leitura*(4.9/1023);
-    angulo = angMax - prevAngulo;
-    if(leitura > 511.5){
-        return 360-angulo
-    }
+    float prevAngulo = angMax * leitura*(4.9/1023);
+    float angulo = angMax - prevAngulo;
     return angulo;
 }
 float calcularPosX(int pin1, int pin2){
