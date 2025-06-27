@@ -1,27 +1,26 @@
 float angle;
 float volts;
-#define pot1 A0;
-#define pot2 A1;
-int angMax = 270;
+#define pot1 A0
+#define pot2 A1
+int angMax = 4.712388;
 
 void setup(){
   Serial.begin(115200);
 }
 
 void loop(){
-    float l1 = analogRead(pot1);
+    float l1 = calcularAng(pot1);
     float l2 = analogRead(pot2);
-    float x = calcularPosX(pot1, pot2);
-    float y = calcularPosY(pot1, pot2);
-    Serial.print();
+    float x = calcularPosX(pot1, 0);
+    float y = calcularPosY(pot1, 0);
+    Serial.print(x);
     Serial.print(",");
-    Serial.println();
+    Serial.println(y);
 }
 
 float calcularAng(int pin){
-    unsigned long leitura = analogRead(pin);
-    float prevAngulo = angMax * leitura*(4.9/1023);
-    float angulo = angMax - prevAngulo;
+    float leitura = analogRead(pin);
+    float prevAngulo = angMax * (leitura/1024);
     return angulo;
 }
 float calcularPosX(int pin1, int pin2){
