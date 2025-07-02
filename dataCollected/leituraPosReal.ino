@@ -1,4 +1,3 @@
-float angle;
 #define pot1 A0
 #define pot2 A1
 int angMax = 270;
@@ -23,9 +22,9 @@ float calcularAng(int pin, float refAng){
     float leitura = analogRead(pin);
     float angulo = angMax * (leitura/1024);
     if(angulo > refAng){
-        return 360 - (angulo - refAng);
+        return 360 - (refAng - angulo);
     }
-    return angulo - refAng;
+    return refAng-angulo;
 }
 
 float referenceAng(int pin){
