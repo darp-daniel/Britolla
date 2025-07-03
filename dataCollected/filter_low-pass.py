@@ -2,49 +2,67 @@ from scipy import signal
 import matplotlib.pyplot as plt
 import numpy as np
 import math
-plt.rcParams["figure.figsize"] = 10,5
-plt.rcParams["font.size"] = 16
-plt.rcParams.update({"text.usetex": True,"font.family": "sans-serif","font.sans-serif": ["Helvetica"]})
 
-# Generate a signal
-samplingFreq = 4000; # sampled at 1 kHz = 1000 samples / second
-tlims = [0,1]        # in seconds
-signalFreq = [2,20]; # Cycles / second
-signalMag = [1,0.2]; # magnitude of each sine
-t = np.linspace(tlims[0],tlims[1],(tlims[1]-tlims[0])*samplingFreq)
-y = signalMag[0]*np.sin(2*math.pi*signalFreq[0]*t) + signalMag[1]*np.sin(2*math.pi*signalFreq[1]*t)
+# Parâmetros do sinal
+samplingFreq = 4000  # 4 kHz
+tlims = [0, 1]       # 1 segundo
+signalFreq = [0.2, 0.5] # Testa com uma frequência fora da banda também
+signalMag = [1, 0.2]
 
-# Compute the Fourier transform
-yhat = np.fft.fft(y);
-fcycles = np.fft.fftfreq(len(t),d=1.0/samplingFreq); # the frequencies in cycles/s
+# Tempo e sinal
+t = np.linspace(tlims[0], tlims[1], int((tlims[1] - tlims[0]) * samplingFreq), endpoint=False)
+# y = signalMag[0]*np.sin(2*np.pi*signalFreq[0]*t) + signalMag[1]*np.sin(2*np.pi*signalFreq[1]*t)
+y = 0.5 * np.ones_like(t) + 0.01*np.random.randn(len(t))  # Simula valor parado com ruído
 
 
-# Low-pass filter
-w0 = 2*np.pi*100; # pole frequency (rad/s)
-num = w0        # transfer function numerator coefficients
-den = [1,w0]    # transfer function denominator coefficients
-lowPass = signal.TransferFunction(num,den) # Transfer function
+# FFT original
+yhat = np.fft.fft(y)
+fcycles = np.fft.fftfreq(len(t), d=1.0/samplingFreq)
 
-# Generate the bode plot
-w = np.logspace( np.log10(min(signalFreq)*2*np.pi/10), np.log10(max(signalFreq)*2*np.pi*10), 500 )
-w, mag, phase = signal.bode(lowPass,w)
+# Filtro analógico (1ª ordem passa-baixa com 100 Hz de corte)
+fc = 10  # frequência de corte
+w0 = 2 * np.pi * fc
+num = [w0]
+den = [1, w0]
+lowPass = signal.TransferFunction(num, den)
 
-
-dt = 1.0/samplingFreq;
-discreteLowPass = lowPass.to_discrete(dt,method='gbt',alpha=0.5)
+# Conversão para filtro digital (bilinear transform)
+dt = 1.0 / samplingFreq
+discreteLowPass = lowPass.to_discrete(dt, method='bilinear')
 print(discreteLowPass)
 
-# The coefficients from the discrete form of the filter transfer function (but with a negative sign)
-b = discreteLowPass.num;
-a = -discreteLowPass.den;
-print("Filter coefficients b_i: " + str(b))
-print("Filter coefficients a_i: " + str(a[1:]))
+# Coeficientes do filtro digital
+b = discreteLowPass.num
+a = discreteLowPass.den
+print("Coeficientes b:", b)
+print("Coeficientes a:", a)
 
-# Filter the signal
-yfilt = np.zeros(len(y));
-for i in range(3,len(y)):
-    yfilt[i] = a[1]*yfilt[i-1] + b[0]*y[i] + b[1]*y[i-1];
-    
-# Generate Fourier transform
+# Aplicar filtro (filtro IIR: y[n] = b0*x[n] + b1*x[n-1] - a1*y[n-1])
+yfilt = np.zeros(len(y))
+for i in range(1, len(y)):
+    yfilt[i] = b[0]*y[i] + b[1]*y[i-1] - a[1]*yfilt[i-1]
+
+# FFT do sinal filtrado
 yfilthat = np.fft.fft(yfilt)
-fcycles = np.fft.fftfreq(len(t),d=1.0/samplingFreq)
+
+# Plot para comparar
+plt.figure(figsize=(12, 6))
+
+plt.subplot(2,1,1)
+plt.plot(t, y, label="Sinal original")
+plt.plot(t, yfilt, label="Sinal filtrado", linestyle='--')
+plt.xlabel("Tempo [s]")
+plt.ylabel("Amplitude")
+plt.legend()
+plt.title("Sinal no tempo")
+
+plt.subplot(2,1,2)
+plt.semilogy(fcycles[:len(fcycles)//2], np.abs(yhat[:len(yhat)//2]), label="Original")
+plt.semilogy(fcycles[:len(fcycles)//2], np.abs(yfilthat[:len(yfilthat)//2]), label="Filtrado")
+plt.xlabel("Frequência [Hz]")
+plt.ylabel("Magnitude")
+plt.legend()
+plt.title("FFT")
+
+plt.tight_layout()
+plt.show()
