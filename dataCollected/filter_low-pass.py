@@ -1,13 +1,14 @@
 from scipy import signal
 import matplotlib.pyplot as plt
 import numpy as np
-import math
+import time
 import serial
 
 #Conexão Serial
 porta = "/dev/ttyUSB0"
 baud_rate = 115200
 ser = serial.Serial(porta, baud_rate)
+time.sleep(2)
 
 #Captação Serial
 y = []
@@ -15,10 +16,13 @@ y = []
 for _ in range(1000):
     try:
         linha = ser.readline().decode().strip()
-        valor = int(linha)
-        y.append(valor)
-    except:
-        pass
+        if linha:
+            print("Recebido:", linha)  # <-- DEBUG
+            valor = float(linha)
+            y.append(valor)
+    except Exception as e:
+        print("Erro ao ler valor:", e)
+
 
 
 y = np.array(y)
@@ -41,7 +45,7 @@ yhat = np.fft.fft(y)
 fcycles = np.fft.fftfreq(len(t), d=1.0/samplingFreq)
 
 # Filtro analógico (1ª ordem passa-baixa com 100 Hz de corte)
-fc = 10  # frequência de corte
+fc = 5  # frequência de corte
 w0 = 2 * np.pi * fc
 num = [w0]
 den = [1, w0]
@@ -57,6 +61,9 @@ b = discreteLowPass.num
 a = discreteLowPass.den
 print("Coeficientes b:", b)
 print("Coeficientes a:", a)
+
+print("Equação do filtro digital (diferença):")
+print(f"y[n] = {b[0]:.6f} * x[n] + {b[1]:.6f} * x[n-1] - {a[1]:.6f} * y[n-1]")
 
 # Aplicar filtro (filtro IIR: y[n] = b0*x[n] + b1*x[n-1] - a1*y[n-1])
 yfilt = np.zeros(len(y))
