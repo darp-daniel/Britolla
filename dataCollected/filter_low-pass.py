@@ -2,6 +2,24 @@ from scipy import signal
 import matplotlib.pyplot as plt
 import numpy as np
 import math
+import serial
+
+#Conexão Serial
+porta = "/tty0"
+baud_rate = 9600
+ser = serial.Serial(porta, baud_rate)
+
+#Captação Serial
+y = []
+
+for i in range(1000):
+    linha = ser.readline()
+    valor = int(linha.strip())
+    y.append(valor)
+
+y = np.array(y)
+
+
 
 # Parâmetros do sinal
 samplingFreq = 4000  # 4 kHz
@@ -12,7 +30,6 @@ signalMag = [1, 0.2]
 # Tempo e sinal
 t = np.linspace(tlims[0], tlims[1], int((tlims[1] - tlims[0]) * samplingFreq), endpoint=False)
 # y = signalMag[0]*np.sin(2*np.pi*signalFreq[0]*t) + signalMag[1]*np.sin(2*np.pi*signalFreq[1]*t)
-y = 0.5 * np.ones_like(t) + 0.01*np.random.randn(len(t))  # Simula valor parado com ruído
 
 
 # FFT original

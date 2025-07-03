@@ -1,23 +1,20 @@
-float prevAng = 0.00;
-float angle;
-float volts;
 #define pin A0
-int angMax = 270;
+const int interAmostra = 2500
+unsigned long ultimoInt = 0;
+float leitura = 0;
 
 void setup(){
   Serial.begin(115200);
 }
 
 void loop(){
-  float leitura = analogRead(pin);
-  volts = leitura*(4.9/1023);
-  angle = angMax * leitura/1023;
+  unsigned long now = micros();
+  if(now - ultimoInt >= interAmostra){
+    Serial.print(now - ultmoInt);
+    Serial.print(", ")
+    ultimoInt = now;
 
-  if(prevAng < angle){
-    Serial.print("Volts:");
-    Serial.print(volts);
-    Serial.print(", Ângulo:");
-    Serial.println(angle);
-    prevAng = angle;
+    leitura = analogRead(pin);
+    Serial.println(leitura);
   }
 }
