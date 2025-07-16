@@ -14,10 +14,11 @@ void Pot::setAngRef() {
   this->angRef = xn * 270; // depende da calibração real
   xn1 = xn;
   yn1 = angRef;
+  Serial.print("Este é o ângulo de Referencia:");
   Serial.println(angRef);
 }
 
-float Pot::leitura() {
+ Pot::leitura() {
   unsigned long now = micros();
   if (now - ultInter >= interAmostra) {
     xn = analogRead(pino) / 1023.0; // normaliza
@@ -25,10 +26,10 @@ float Pot::leitura() {
     yn1 = yn;
     xn1 = xn;
     ultInter = now;
-    float angulo = 270 * yn;
+    int angulo = 270 * yn;
     if(angulo > angRef){ 
         return 360 + (angRef - angulo);
-    }loat angulo = 270 * yn;
+    }
     return angRef-angulo;
   }
 }

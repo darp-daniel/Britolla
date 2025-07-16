@@ -14,7 +14,7 @@ class Pot {
 
   public:
     Pot(int pin);
-    float leitura();
+    int leitura();
     void setAngRef();  // ← Moveu para a seção pública
     float angulo();
 };
