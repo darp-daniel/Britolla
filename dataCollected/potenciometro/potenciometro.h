@@ -1,10 +1,11 @@
 #ifndef POT_H
 #define POT_H
 
+
 class Pot {
   private:
     int pino;
-    float angRef;
+    int angRef;
     const int interAmostra = 2500;
     float xn1;
     float yn1;
@@ -16,7 +17,7 @@ class Pot {
     Pot(int pin);
     int leitura();
     void setAngRef();  // ← Moveu para a seção pública
-    float angulo();
+    float angulo(int leitura);
 };
 
 #endif

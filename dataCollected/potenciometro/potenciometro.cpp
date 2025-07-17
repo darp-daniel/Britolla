@@ -1,5 +1,6 @@
 #include "potenciometro.h"
 #include <Arduino.h>
+#include "math.h"
 
 Pot::Pot(int pin) {
   this->pino = pin;
@@ -18,10 +19,10 @@ void Pot::setAngRef() {
   Serial.println(angRef);
 }
 
- Pot::leitura() {
+int Pot::leitura() {
   unsigned long now = micros();
   if (now - ultInter >= interAmostra) {
-    xn = analogRead(pino) / 1023.0; // normaliza
+    xn = analogRead(pino) / 1023.0; 
     yn = 0.072821 * xn + 0.072821 * xn1 + 0.854359 * yn1;
     yn1 = yn;
     xn1 = xn;
@@ -32,5 +33,9 @@ void Pot::setAngRef() {
     }
     return angRef-angulo;
   }
+}
+
+float Pot::angulo(int leitura) {
+  return (leitura*M_PI)/180;
 }
 

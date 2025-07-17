@@ -45,7 +45,7 @@ yhat = np.fft.fft(y)
 fcycles = np.fft.fftfreq(len(t), d=1.0/samplingFreq)
 
 # Filtro analógico (1ª ordem passa-baixa com 100 Hz de corte)
-fc = 5  # frequência de corte
+fc = 2  # frequência de corte
 w0 = 2 * np.pi * fc
 num = [w0]
 den = [1, w0]

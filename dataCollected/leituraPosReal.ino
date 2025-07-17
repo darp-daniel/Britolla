@@ -38,7 +38,7 @@ float filter(int pin){
 float calcularAng(int pin, float refAng){
     float leitura = filter(pin);
     float angulo = angMax * (leitura/1024);
-    if(angulo > refAng){
+    if(angulo > refAng){ 
         return 360 + (refAng - angulo);
     }
     return refAng-angulo;
