@@ -35,7 +35,7 @@ public:
     
     // Expose the IP address as an editable property
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TCP Socket")
-    FString ListenAddress = "0.0.0.0";
+    FString ListenAddress = "127.0.0.1";
     
 private:
     FSocket* ListenerSocket;

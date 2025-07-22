@@ -39,7 +39,7 @@ void ASocketListener::SendMessage(const FString& Message)
 {
     if (!ConnectionSocket)
     {
-        UE_LOG(LogTemp, Warning, TEXT("No connection to send message"));
+        UE_LOG(LogTemp, Warning, TEXT("Sem conexão impossível enviar mensagem"));
         return;
     }
 
@@ -49,7 +49,7 @@ void ASocketListener::SendMessage(const FString& Message)
     
     if (BytesSent <= 0)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Failed to send message"));
+        UE_LOG(LogTemp, Warning, TEXT("Failha ao enviar mensagem: %s"), *Message);
     }
 }
 
@@ -60,7 +60,7 @@ void ASocketListener::StartTCPReceiver()
     if (ListenerSocket)
     {
         GetWorldTimerManager().SetTimer(TCPConnectionListenerTimerHandle, this, &ASocketListener::TCPSocketListener, 0.01, true);
-        UE_LOG(LogTemp, Log, TEXT("TCP Listener started on %s:%d"), *ListenAddress, Port);
+        UE_LOG(LogTemp, Log, TEXT("TCP Listener %s:%d"), *ListenAddress, Port);
     }
 }
 
@@ -71,7 +71,7 @@ FSocket* ASocketListener::CreateTCPConnectionListener()
     FIPv4Address IPAddress;
     if (!FIPv4Address::Parse(ListenAddress, IPAddress))
     {
-        UE_LOG(LogTemp, Error, TEXT("Invalid IP address: %s"), *ListenAddress);
+        UE_LOG(LogTemp, Error, TEXT("IP Inválido %s"), *ListenAddress);
         return nullptr;
     }
     
@@ -79,13 +79,15 @@ FSocket* ASocketListener::CreateTCPConnectionListener()
     
     if (!Socket->Bind(*Endpoint.ToInternetAddr()))
     {
-        UE_LOG(LogTemp, Error, TEXT("Failed to bind socket"));
+        UE_LOG(LogTemp, Error, TEXT("Failed to bind socket to %s:%d"), *ListenAddress, Port);
+        ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(Socket);
         return nullptr;
     }
     
     if (!Socket->Listen(1))
     {
-        UE_LOG(LogTemp, Error, TEXT("Failed to listen on socket"));
+        UE_LOG(LogTemp, Error, TEXT("Inviável escuta"));
+        ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(Socket);
         return nullptr;
     }
     
@@ -101,11 +103,11 @@ void ASocketListener::TCPSocketListener()
     
     if (ListenerSocket->HasPendingConnection(Pending) && Pending)
     {
-        ConnectionSocket = ListenerSocket->Accept(*RemoteAddress, TEXT("TCP Received Socket"));
+        ConnectionSocket = ListenerSocket->Accept(*RemoteAddress, TEXT("TCP Connection"));
         
         if (ConnectionSocket)
         {
-            UE_LOG(LogTemp, Log, TEXT("Accepted connection from %s"), *RemoteAddress->ToString(true));
+            UE_LOG(LogTemp, Log, TEXT("Conexão de %s"), *RemoteAddress->ToString(true));
             
             uint32 Size;
             TArray<uint8> ReceivedData;
