@@ -1,0 +1,40 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/daniel/Desktop/WorkSpace/Britolla/socketUE5/cpp_usage/cpp_program/SerialPort.h
+string
+-
+
+/home/daniel/Desktop/WorkSpace/Britolla/socketUE5/cpp_usage/cpp_program/SocketSender.h
+string
+-
+WinSock2.h
+-
+WS2tcpip.h
+-
+sys/socket.h
+-
+arpa/inet.h
+-
+unistd.h
+-
+netdb.h
+-
+
+/home/daniel/Desktop/WorkSpace/Britolla/socketUE5/cpp_usage/cpp_program/main.cpp
+SocketSender.h
+/home/daniel/Desktop/WorkSpace/Britolla/socketUE5/cpp_usage/cpp_program/SocketSender.h
+SerialPort.h
+/home/daniel/Desktop/WorkSpace/Britolla/socketUE5/cpp_usage/cpp_program/SerialPort.h
+thread
+-
+chrono
+-
+iostream
+-
+

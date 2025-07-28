@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/SerialToUE5.dir/main.cpp.o CMakeFiles/SerialToUE5.dir/SerialPort.cpp.o CMakeFiles/SerialToUE5.dir/SocketSender.cpp.o  -o SerialToUE5  -lpthread 

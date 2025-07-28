@@ -1,0 +1,3 @@
+/home/daniel/Desktop/WorkSpace/Britolla/socketUE5/cpp_usage/cpp_program/build/CMakeFiles/edit_cache.dir
+/home/daniel/Desktop/WorkSpace/Britolla/socketUE5/cpp_usage/cpp_program/build/CMakeFiles/rebuild_cache.dir
+/home/daniel/Desktop/WorkSpace/Britolla/socketUE5/cpp_usage/cpp_program/build/CMakeFiles/SerialToUE5.dir

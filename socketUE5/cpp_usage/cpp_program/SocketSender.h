@@ -1,7 +1,15 @@
 #pragma once
 #include <string>
-#include <WinSock2.h>
-#include <WS2tcpip.h>
+#ifdef _WIN32
+  #include <WinSock2.h>
+  #include <WS2tcpip.h>
+  #pragma comment(lib, "ws2_32.lib") // Só Windows
+#else
+  #include <sys/socket.h>
+  #include <arpa/inet.h>
+  #include <unistd.h>
+  #include <netdb.h>
+#endif
 
 class TCPClient
 {
@@ -22,7 +30,11 @@ public:
     bool IsConnected() const { return m_connected; }
 
 private:
-    SOCKET m_socket;
+    #ifdef _WIN32
+        SOCKET m_socket;
+    #else
+        int m_socket;
+    #endif
     bool m_connected;
     std::string m_serverIP;
     int m_serverPort;
