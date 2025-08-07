@@ -1,9 +1,10 @@
 #pragma once
 #include <string>
+
 #ifdef _WIN32
   #include <WinSock2.h>
   #include <WS2tcpip.h>
-  #pragma comment(lib, "ws2_32.lib") // Só Windows
+  #pragma comment(lib, "ws2_32.lib")
 #else
   #include <sys/socket.h>
   #include <arpa/inet.h>
@@ -11,33 +12,30 @@
   #include <netdb.h>
 #endif
 
-class TCPClient
+class UDPClient
 {
 public:
-    TCPClient();
-    ~TCPClient();
+    UDPClient();
+    ~UDPClient();
 
-    // Connect to server
-    bool Connect(const std::string& ip = "127.0.0.1", int port = 12345);
-
-    // Disconnect from server
-    void Disconnect();
+    // Setup target address
+    bool Connect(const std::string& ip , int port);
 
     // Send message
     bool Send(const std::string& message);
 
-    // Check connection status
     bool IsConnected() const { return connected; }
 
+    void Disconnect();
+
 private:
-    #ifdef _WIN32
-        SOCKET m_socket;
-    #else
-        int m_socket;
-    #endif
+#ifdef _WIN32
+    SOCKET m_socket;
+#else
+    int m_socket;
+#endif
     bool connected;
-    std::string serverIP;
-    int serverPort;
+    sockaddr_in serverAddr;
 
     void Init();
     void Cleanup();

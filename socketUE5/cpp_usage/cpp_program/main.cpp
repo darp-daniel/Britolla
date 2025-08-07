@@ -12,7 +12,7 @@ int main() {
         #else
             SerialPort serial("/dev/ttyUSB0", 115200);
         #endif
-        TCPClient client;
+        UDPClient client;
 
         if (!serial.isConnected()) {
             std::cerr << "Failed to connect to serial port" << std::endl;

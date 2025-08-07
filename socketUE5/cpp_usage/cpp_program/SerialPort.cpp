@@ -34,7 +34,7 @@ bool SerialPort::isConnected() const {
 std::string SerialPort::getMessage() {
     if (!connected) return "";
 
-    char buffer[256];
+    char buffer[32];
     size_t bytesRead = 0;
 
 #ifdef _WIN32
@@ -50,22 +50,10 @@ std::string SerialPort::getMessage() {
 #endif
 
     if (bytesRead > 0) {
-        // Adiciona dados lidos no buffer interno
-        readBuffer.append(buffer, bytesRead);
-
-        // Procura por '\n' (fim de linha)
+        readBuffer = std::string(buffer);
         size_t pos = readBuffer.find('\n');
         if (pos != std::string::npos) {
-            // Extrai a linha (sem incluir '\n')
             std::string line = readBuffer.substr(0, pos);
-
-            // Remove a linha do buffer (incluindo o '\n')
-            readBuffer.erase(0, pos + 1);
-
-            // Opcional: remover '\r' no fim da linha, se existir
-            if (!line.empty() && line.back() == '\r') {
-                line.pop_back();
-            }
 
             return line;
         }
