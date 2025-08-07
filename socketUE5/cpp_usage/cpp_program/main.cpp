@@ -8,7 +8,7 @@
 int main() {
     try {
         #ifdef _WIN32
-            SerialPort serial("COM3", 9600);
+            SerialPort serial("COM3", 115200);
         #else
             SerialPort serial("/dev/ttyUSB0", 115200);
         #endif
