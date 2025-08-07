@@ -24,6 +24,7 @@ private:
     bool connected;
 
     bool configurePort();
+    std::string readBuffer;
 };
 
 #endif // SERIALPORT_H
