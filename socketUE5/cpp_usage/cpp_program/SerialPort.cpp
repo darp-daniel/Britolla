@@ -34,26 +34,47 @@ bool SerialPort::isConnected() const {
 std::string SerialPort::getMessage() {
     if (!connected) return "";
 
-    #ifdef _WIN32
     char buffer[256];
-    DWORD bytesRead;
-    
-    if (ReadFile(handle, buffer, sizeof(buffer), &bytesRead, NULL)) {
-        if (bytesRead > 0) {
-            return std::string(buffer, bytesRead);
-        }
+    size_t bytesRead = 0;
+
+#ifdef _WIN32
+    DWORD dwBytesRead = 0;
+    if (ReadFile(handle, buffer, sizeof(buffer), &dwBytesRead, NULL) && dwBytesRead > 0) {
+        bytesRead = dwBytesRead;
     }
-    #else
-    char buffer[256];
+#else
     int n = read(fileDescriptor, buffer, sizeof(buffer));
     if (n > 0) {
-        buffer[n] = '\0';
-        return std::string(buffer);
+        bytesRead = n;
     }
-    #endif
-    
+#endif
+
+    if (bytesRead > 0) {
+        // Adiciona dados lidos no buffer interno
+        readBuffer.append(buffer, bytesRead);
+
+        // Procura por '\n' (fim de linha)
+        size_t pos = readBuffer.find('\n');
+        if (pos != std::string::npos) {
+            // Extrai a linha (sem incluir '\n')
+            std::string line = readBuffer.substr(0, pos);
+
+            // Remove a linha do buffer (incluindo o '\n')
+            readBuffer.erase(0, pos + 1);
+
+            // Opcional: remover '\r' no fim da linha, se existir
+            if (!line.empty() && line.back() == '\r') {
+                line.pop_back();
+            }
+
+            return line;
+        }
+    }
+
+    // Não tem linha completa ainda
     return "";
 }
+
 
 void SerialPort::close() {
     if (!connected) return;
@@ -75,7 +96,18 @@ void SerialPort::close() {
 
 bool SerialPort::configurePort() {
     #ifdef _WIN32
-    handle = CreateFile(portName.c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+    std::wstring wPortName(portName.begin(), portName.end());
+
+    handle = CreateFileW(
+        wPortName.c_str(),  // <- aqui vai o LPCWSTR
+        GENERIC_READ | GENERIC_WRITE,
+        0,
+        NULL,
+        OPEN_EXISTING,
+        0,
+        NULL
+    );
     if (handle == INVALID_HANDLE_VALUE) {
         return false;
     }
