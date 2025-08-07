@@ -27,7 +27,7 @@ public:
     bool Send(const std::string& message);
 
     // Check connection status
-    bool IsConnected() const { return m_connected; }
+    bool IsConnected() const { return connected; }
 
 private:
     #ifdef _WIN32
@@ -35,10 +35,10 @@ private:
     #else
         int m_socket;
     #endif
-    bool m_connected;
-    std::string m_serverIP;
-    int m_serverPort;
+    bool connected;
+    std::string serverIP;
+    int serverPort;
 
-    void InitializeWinsock();
-    void CleanupWinsock();
+    void Init();
+    void Cleanup();
 };
