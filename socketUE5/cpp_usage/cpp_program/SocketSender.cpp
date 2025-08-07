@@ -11,28 +11,7 @@
 
 #include <iostream>
 #include <string>
-
-class TCPClient {
-public:
-    TCPClient();
-    ~TCPClient();
-
-    bool Connect(const std::string& ip, int port);
-    void Disconnect();
-    bool Send(const std::string& message);
-    bool IsConnected() const { return connected; }
-
-private:
-#ifdef _WIN32
-    SOCKET sock;
-#else
-    int m_socket;
-#endif
-    bool connected;
-
-    void Init();
-    void Cleanup();
-};
+#include "SocketSender.h"
 
 TCPClient::TCPClient() : connected(false) {
     Init();
@@ -63,8 +42,8 @@ bool TCPClient::Connect(const std::string& ip, int port) {
         Disconnect();
 
 #ifdef _WIN32
-    sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (sock == INVALID_SOCKET) {
+    m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (m_socket == INVALID_SOCKET) {
         std::cerr << "Socket creation failed: " << WSAGetLastError() << "\n";
         return false;
     }
@@ -86,9 +65,9 @@ bool TCPClient::Connect(const std::string& ip, int port) {
     }
 
 #ifdef _WIN32
-    if (connect(sock, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
+    if (connect(m_socket, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
         std::cerr << "Connection failed: " << WSAGetLastError() << "\n";
-        closesocket(sock);
+        closesocket(m_socket);
         return false;
     }
 #else
@@ -108,7 +87,7 @@ void TCPClient::Disconnect() {
     if (!connected) return;
 
 #ifdef _WIN32
-    closesocket(sock);
+    closesocket(m_socket);
 #else
     close(m_socket);
 #endif
@@ -123,7 +102,7 @@ bool TCPClient::Send(const std::string& message) {
     }
 
 #ifdef _WIN32
-    int sent = send(sock, message.c_str(), static_cast<int>(message.size()), 0);
+    int sent = send(m_socket, message.c_str(), static_cast<int>(message.size()), 0);
     if (sent == SOCKET_ERROR) {
         std::cerr << "Send failed: " << WSAGetLastError() << "\n";
         Disconnect();
