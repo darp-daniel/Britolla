@@ -45,9 +45,9 @@ void loop() {
   if (fabs(x - ultimoX) > TOLERANCIA || fabs(y - ultimoY) > TOLERANCIA) {
 
     // 3. Se a mudança for maior que a tolerância, imprimimos.
-    Serial.print(x);
+    Serial.print(ang1);
     Serial.print(",");
-    Serial.println(y);
+    Serial.println(ang2);
     //Serial.print(",");
     //Serial.print(xH);
     //Serial.print(",");
