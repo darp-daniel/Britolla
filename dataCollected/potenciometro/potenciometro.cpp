@@ -36,6 +36,12 @@ int Pot::leitura() {
 }
 
 float Pot::angulo(int leitura) {
-  return (leitura*M_PI)/180;
+  // return (leitura*M_PI)/180;
+  int l = leitura;
+  if (l > 180)
+  l -= 360;
+  else if (l < -180)
+  l += 360;
+  return (l*M_PI)/180;
 }
 

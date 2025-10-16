@@ -1,3 +1,7 @@
 {
-    "cmake.sourceDirectory": "C:/Users/flani/Documents/Britolla/Comunicação de arduinos/libraries/RF24"
+    "cmake.sourceDirectory": "C:/Users/flani/Documents/Britolla/Comunicação de arduinos/libraries/RF24",
+    "files.associations": {
+        ".fantomasignore": "ignore",
+        "ostream": "cpp"
+    }
 }
